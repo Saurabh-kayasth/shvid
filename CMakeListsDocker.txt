@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.10)
+project(shvid VERSION 1.0)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED True)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(FFMPEG REQUIRED libavformat libavcodec libavutil libavdevice libavfilter libswresample libswscale libpostproc)
+
+include_directories(${FFMPEG_INCLUDE_DIRS})
+
+target_include_directories(shvid PRIVATE include)
+
+add_executable(shvid main.c shell/shell.c shell/args.c core/filters.c core/info.c helpers/cmd_helpers.c helpers/file_helpers.c)
+
+set_target_properties(shvid PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build
+)
+
+install(TARGETS shvid DESTINATION /usr/local/bin)
+
+target_link_libraries(shvid ${FFMPEG_LIBRARIES} pthread)
